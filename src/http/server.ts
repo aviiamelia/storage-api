@@ -1,12 +1,16 @@
 import fastify from "fastify";
+import multipart from "@fastify/multipart";
+export const app = fastify();
+import { defineRoute } from "../utils/defineroute";
+const port = 3333;
 
-const app = fastify();
-
+app.register(multipart);
+app.register(defineRoute("user.route"));
 app
   .listen({
-    port: 3333,
+    port: port,
     host: "0.0.0.0",
   })
   .then(() => {
-    console.log("server running");
+    console.log(`server running on port ${port}`);
   });
