@@ -1,0 +1,20 @@
+{
+  "name": "storage-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "rafael <rafael.zoe26@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev":"tsx watch src/http/server.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.8.1",
+    "fastify": "^4.25.2",
+    "prisma": "^5.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.6",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
