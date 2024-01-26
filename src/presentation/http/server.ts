@@ -1,11 +1,11 @@
 import fastify from "fastify";
 import multipart from "@fastify/multipart";
-export const app = fastify();
-import { defineRoute } from "../utils/defineroute";
+import userRoute from "../../routes/user.route";
 const port = 3333;
 
+const app = fastify();
 app.register(multipart);
-app.register(defineRoute("user.route"));
+app.register(userRoute);
 app
   .listen({
     port: port,
