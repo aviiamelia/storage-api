@@ -4,11 +4,14 @@ import { HttpRequest, HttpResponse } from "../protocols/http";
 import { ValuesValidator } from "../protocols/valuesValidator";
 import { userSchema } from "../protocols/user.schema";
 import { badRequest } from "../helpers/badrequest";
+import { createUser } from "../../domain/useCases/createUser";
 
 export class SignUpController {
   private readonly valuesValidator: ValuesValidator;
-  constructor(ValuesValidator: ValuesValidator) {
+  private readonly createUser: createUser;
+  constructor(ValuesValidator: ValuesValidator, createUser: createUser) {
     this.valuesValidator = ValuesValidator;
+    this.createUser = createUser;
   }
   handle(httpRequest: HttpRequest): HttpResponse {
     try {
@@ -18,6 +21,8 @@ export class SignUpController {
         return badRequest(new MissingParamError(error.issues));
       }
     }
+    const { username, password, email, isAdmin } = httpRequest.body;
+    this.createUser.create({ username, password, email, isAdmin });
     return {
       body: httpRequest.body,
       statusCode: 200,
