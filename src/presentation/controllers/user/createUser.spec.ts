@@ -1,10 +1,10 @@
-import { ZodIssue } from "zod";
-import { SignUpController } from "./signUp";
-import { UserTypeSchema } from "../protocols/user.schema";
-import { ValuesValidator } from "../protocols/valuesValidator";
-import { MissingParamError } from "../error/missingParamsError";
-import { UserModel } from "../../domain/models/userModel";
-import { createUser } from "../../domain/useCases/createUser";
+import { ZodError, ZodIssue } from "zod";
+import { createUserController } from "./createUser";
+import { UserTypeSchema } from "../../protocols/user.schema";
+import { ValuesValidator } from "../../protocols/valuesValidator";
+import { MissingParamError } from "../../error/missingParamsError";
+import { UserModel } from "../../../domain/models/userModel";
+import { createUser } from "../../../domain/useCases/createUser";
 
 const makeCreateUser = (): createUser => {
   class createUserStub implements createUser {
@@ -12,7 +12,7 @@ const makeCreateUser = (): createUser => {
       const fakeUser = {
         id: "fakeid",
         createdAt: new Date().toISOString().split("T")[0],
-        email: "fakeEmail",
+        email: "fakeEmail@mail.com",
         isAdmin: false,
         password: "fakePassword",
         upDatedAt: new Date().toISOString().split("T")[0],
@@ -23,61 +23,73 @@ const makeCreateUser = (): createUser => {
   }
   return new createUserStub();
 };
+const userBodyValidatorStub = () => {
+  class UserBodyValidatorStub implements ValuesValidator {
+    isValid(
+      values: UserTypeSchema
+    ):
+      | { success: true; data: UserTypeSchema }
+      | { success: false; error: ZodError } {
+      if (values) {
+        return { success: true, data: values };
+      }
+      return { success: false, error: new ZodError([]) };
+    }
+  }
+  return new UserBodyValidatorStub();
+};
 interface SutTypes {
-  sut: SignUpController;
+  sut: createUserController;
   makeCreateUserStub: createUser;
+  userBodyValidator: ValuesValidator;
 }
 
 const makeSut = (): SutTypes => {
-  class UserBodyValidatorStub implements ValuesValidator {
-    isValid(values: UserTypeSchema) {
-      if (values) {
-        return true;
-      }
-      return false;
-    }
-  }
   const makeCreateUserStub = makeCreateUser();
-  const sut = new SignUpController(
-    new UserBodyValidatorStub(),
-    makeCreateUserStub
-  );
+  const userBodyValidator = userBodyValidatorStub();
+  const sut = new createUserController(userBodyValidator, makeCreateUserStub);
   return {
     sut,
     makeCreateUserStub,
+    userBodyValidator,
   };
 };
 
-describe("signUpController", () => {
+describe("creauserControler", () => {
   test("Should return 400 if no proper values are provided", async () => {
-    const { sut } = makeSut();
+    jest.clearAllMocks();
+    const { sut, userBodyValidator } = makeSut();
     const httpRequest = {
       body: {
         username: "any name",
         password: "any_password",
-        email: "rafael@email.com",
+        email: "rafael@email123.com",
       },
     };
-    const errorMock = [
-      {
-        code: "invalid_type",
-        expected: "boolean",
-        received: "undefined",
-        path: ["isAdmin"],
-        message: "Required",
-      },
-    ];
+    const errorMock = {
+      code: "invalid_type",
+      expected: "boolean",
+      received: "undefined",
+      path: ["isAdmin"],
+      message: "Required",
+    };
+
+    jest
+      .spyOn(userBodyValidator, "isValid")
+      .mockReturnValueOnce({
+        success: false,
+        error: new ZodError([errorMock] as ZodIssue[]),
+      });
     const httpResponse = await sut.handle(httpRequest);
-    console.log(httpResponse.body.issues);
     expect(httpResponse.body).toEqual(
-      new MissingParamError(errorMock as ZodIssue[])
+      new MissingParamError([errorMock] as ZodIssue[])
     );
   });
   test("Should call values validator, with correct values", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
-        username: "any name",
+        username: "any name123",
         password: "any_password",
         email: "rafael@email.com",
         isAdmin: false,
@@ -117,7 +129,7 @@ describe("signUpController", () => {
     expect(httpResponse.body).toEqual({
       id: "fakeid",
       createdAt: new Date().toISOString().split("T")[0],
-      email: "fakeEmail",
+      email: "fakeEmail@mail.com",
       isAdmin: false,
       password: "fakePassword",
       upDatedAt: new Date().toISOString().split("T")[0],
