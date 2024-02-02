@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx watch --env-file .env src/presentation/http/server.ts",
-    "test": "jest --watch",
+    "test": "jest --watchAll",
     "prisma-studio": "prisma studio --schema=./src/infra/prisma/schema.prisma"
   },
   "dependencies": {

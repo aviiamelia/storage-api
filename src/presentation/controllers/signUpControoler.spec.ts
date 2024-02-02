@@ -1,8 +1,9 @@
 import { ZodIssue } from "zod";
-import { MissingParamError } from "../error/missingParamsError";
 import { SignUpController } from "./signUp";
 import { UserTypeSchema } from "../protocols/user.schema";
 import { ValuesValidator } from "../protocols/valuesValidator";
+
+import { MissingParamError } from "../error/missingParamsError";
 
 const makeSut = () => {
   class UserBodyValidatorStub implements ValuesValidator {
@@ -19,6 +20,7 @@ const makeSut = () => {
 describe("signUpController", () => {
   test("Should return 400 if no proper values are provided", () => {
     const sut = makeSut();
+
     const httpRequest = {
       body: {
         username: "any name",
@@ -40,5 +42,19 @@ describe("signUpController", () => {
     expect(httpResponse.body).toEqual(
       new MissingParamError(errorMock as ZodIssue[])
     );
+  });
+  test("Should call values validator, with correct values", () => {
+    const sut = makeSut();
+    const httpRequest = {
+      body: {
+        username: "any name",
+        password: "any_password",
+        email: "rafael@email.com",
+        isAdmin: false,
+      },
+    };
+    const spy = jest.spyOn(sut, "handle");
+    sut.handle(httpRequest);
+    expect(spy).toHaveBeenCalledWith(httpRequest);
   });
 });
