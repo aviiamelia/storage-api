@@ -8,5 +8,5 @@ export interface createUserModel {
 }
 
 export interface createUser {
-  create(user: createUserModel): UserModel;
+  create(user: createUserModel): Promise<UserModel>;
 }

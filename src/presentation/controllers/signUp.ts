@@ -3,7 +3,7 @@ import { MissingParamError } from "../error/missingParamsError";
 import { HttpRequest, HttpResponse } from "../protocols/http";
 import { ValuesValidator } from "../protocols/valuesValidator";
 import { userSchema } from "../protocols/user.schema";
-import { badRequest } from "../helpers/badrequest";
+import { badRequest, ok } from "../helpers/https.helpers";
 import { createUser } from "../../domain/useCases/createUser";
 
 export class SignUpController {
@@ -13,7 +13,7 @@ export class SignUpController {
     this.valuesValidator = ValuesValidator;
     this.createUser = createUser;
   }
-  handle(httpRequest: HttpRequest): HttpResponse {
+  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       userSchema.parse(httpRequest.body);
     } catch (error) {
@@ -22,10 +22,12 @@ export class SignUpController {
       }
     }
     const { username, password, email, isAdmin } = httpRequest.body;
-    this.createUser.create({ username, password, email, isAdmin });
-    return {
-      body: httpRequest.body,
-      statusCode: 200,
-    };
+    const user = await this.createUser.create({
+      username,
+      password,
+      email,
+      isAdmin,
+    });
+    return ok(200, user);
   }
 }

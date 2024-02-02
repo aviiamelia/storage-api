@@ -8,14 +8,14 @@ import { createUser } from "../../domain/useCases/createUser";
 
 const makeCreateUser = (): createUser => {
   class createUserStub implements createUser {
-    create(): UserModel {
+    async create(): Promise<UserModel> {
       const fakeUser = {
         id: "fakeid",
-        createdAt: new Date(),
+        createdAt: new Date().toISOString().split("T")[0],
         email: "fakeEmail",
         isAdmin: false,
         password: "fakePassword",
-        upDatedAt: new Date(),
+        upDatedAt: new Date().toISOString().split("T")[0],
         username: "fake username",
       };
       return fakeUser;
@@ -49,7 +49,7 @@ const makeSut = (): SutTypes => {
 };
 
 describe("signUpController", () => {
-  test("Should return 400 if no proper values are provided", () => {
+  test("Should return 400 if no proper values are provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -67,13 +67,13 @@ describe("signUpController", () => {
         message: "Required",
       },
     ];
-    const httpResponse = sut.handle(httpRequest);
+    const httpResponse = await sut.handle(httpRequest);
     console.log(httpResponse.body.issues);
     expect(httpResponse.body).toEqual(
       new MissingParamError(errorMock as ZodIssue[])
     );
   });
-  test("Should call values validator, with correct values", () => {
+  test("Should call values validator, with correct values", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -84,10 +84,10 @@ describe("signUpController", () => {
       },
     };
     const spy = jest.spyOn(sut, "handle");
-    sut.handle(httpRequest);
+    await sut.handle(httpRequest);
     expect(spy).toHaveBeenCalledWith(httpRequest);
   });
-  test("Should call create user, with correct values", () => {
+  test("Should call create user, with correct values", async () => {
     const { sut, makeCreateUserStub } = makeSut();
     const httpRequest = {
       body: {
@@ -98,7 +98,30 @@ describe("signUpController", () => {
       },
     };
     const createSpy = jest.spyOn(makeCreateUserStub, "create");
-    sut.handle(httpRequest);
+    await sut.handle(httpRequest);
     expect(createSpy).toHaveBeenCalledWith(httpRequest.body);
+  });
+  test("Should return 200 if the user is created", async () => {
+    const { sut } = makeSut();
+    const httpRequest = {
+      body: {
+        username: "valid name",
+        password: "valid password",
+        email: "valid@email.com",
+        isAdmin: true,
+      },
+    };
+
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(200);
+    expect(httpResponse.body).toEqual({
+      id: "fakeid",
+      createdAt: new Date().toISOString().split("T")[0],
+      email: "fakeEmail",
+      isAdmin: false,
+      password: "fakePassword",
+      upDatedAt: new Date().toISOString().split("T")[0],
+      username: "fake username",
+    });
   });
 });
