@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx watch --env-file .env src/presentation/http/server.ts",
-    "test": "jest"
+    "test": "jest --watchAll",
+    "prisma-studio": "prisma studio --schema=./src/infra/prisma/schema.prisma"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.498.0",

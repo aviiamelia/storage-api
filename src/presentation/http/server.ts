@@ -1,8 +1,8 @@
 import fastify from "fastify";
 import multipart from "@fastify/multipart";
 import userRoute from "../../routes/user.route";
-const port = 3333;
 
+const port = 3333;
 const app = fastify();
 app.register(multipart);
 app.register(userRoute);
