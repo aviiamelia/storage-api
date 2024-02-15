@@ -1,24 +1,21 @@
-import {
-  createUser,
-  CreateUserModel,
-} from "../../../domain/useCases/createUser";
+import { createUser, CreateUserModel } from "../../../domain/useCases/createUser";
 import { UserModel } from "../../../domain/models/userModel";
 import { Encrypter } from "../../protocols/encrypter";
+import { CreateuserRepository } from "../../protocols/createuserRepository";
 
 export class DbCreateUser implements createUser {
   private readonly encrypter;
-  constructor(encrypter: Encrypter) {
+  private readonly creatuserRepository;
+  constructor(encrypter: Encrypter, creatuserRepository: CreateuserRepository) {
     this.encrypter = encrypter;
+    this.creatuserRepository = creatuserRepository;
   }
 
-  async create(user: CreateUserModel): Promise<UserModel> {
-    const data = {
-      ...user,
-      id: "1",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    await this.encrypter.encrypt(user.password);
-    return new Promise((resolve) => resolve(data));
+  async create(userData: CreateUserModel): Promise<UserModel> {
+    const hashedPassword = await this.encrypter.encrypt(userData.password);
+    const user = this.creatuserRepository.create(
+      Object.assign({}, userData, { password: hashedPassword })
+    );
+    return new Promise((resolve) => resolve(user));
   }
 }
