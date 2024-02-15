@@ -7,7 +7,7 @@ export interface UserModel {
   email: string;
   isAdmin: boolean;
   createdAt: Date;
-  upDatedAt: Date;
+  updatedAt: Date;
   folders?: FolderModel[];
   permissions?: Permissions[];
 }

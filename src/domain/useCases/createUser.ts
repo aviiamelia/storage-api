@@ -1,6 +1,6 @@
 import { UserModel } from "../models/userModel";
 
-export interface createUserModel {
+export interface CreateUserModel {
   username: string;
   password: string;
   email: string;
@@ -8,5 +8,5 @@ export interface createUserModel {
 }
 
 export interface createUser {
-  create(user: createUserModel): UserModel;
+  create(user: CreateUserModel): Promise<UserModel>;
 }
