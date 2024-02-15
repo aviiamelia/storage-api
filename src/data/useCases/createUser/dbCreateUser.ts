@@ -1,12 +1,12 @@
 import { createUser, CreateUserModel } from "../../../domain/useCases/createUser";
 import { UserModel } from "../../../domain/models/userModel";
 import { Encrypter } from "../../protocols/encrypter";
-import { CreateuserRepository } from "../../protocols/createuserRepository";
+import { UserRepository } from "../../protocols/createuserRepository";
 
 export class DbCreateUser implements createUser {
   private readonly encrypter;
   private readonly creatuserRepository;
-  constructor(encrypter: Encrypter, creatuserRepository: CreateuserRepository) {
+  constructor(encrypter: Encrypter, creatuserRepository: UserRepository) {
     this.encrypter = encrypter;
     this.creatuserRepository = creatuserRepository;
   }
