@@ -8,17 +8,17 @@ import { createUser } from "../../domain/useCases/createUser";
 
 const makeCreateUser = (): createUser => {
   class createUserStub implements createUser {
-    create(): UserModel {
+    async create(): Promise<UserModel> {
       const fakeUser = {
         id: "fakeid",
         createdAt: new Date(),
         email: "fakeEmail",
         isAdmin: false,
         password: "fakePassword",
-        upDatedAt: new Date(),
+        updatedAt: new Date(),
         username: "fake username",
       };
-      return fakeUser;
+      return new Promise((resolve) => resolve(fakeUser));
     }
   }
   return new createUserStub();
