@@ -1,6 +1,6 @@
 import { UserModel } from "../../../domain/models/userModel";
 import { CreateUserModel } from "../../../domain/useCases/createUser";
-import { CreateuserRepository } from "../../protocols/createuserRepository";
+import { UserRepository } from "../../protocols/createuserRepository";
 import { Encrypter } from "../../protocols/encrypter";
 import { DbCreateUser } from "./dbCreateUser";
 
@@ -12,8 +12,8 @@ const makeEncrypter = (): Encrypter => {
   }
   return new EncrypterStub();
 };
-const makeCreateuserRepository = (): CreateuserRepository => {
-  class CreateuserRepositoryStub implements CreateuserRepository {
+const makeCreateuserRepository = (): UserRepository => {
+  class CreateuserRepositoryStub implements UserRepository {
     async create(user: CreateUserModel): Promise<UserModel> {
       const data = {
         ...user,
@@ -30,7 +30,7 @@ const makeCreateuserRepository = (): CreateuserRepository => {
 interface SutType {
   sut: DbCreateUser;
   encrypterStub: Encrypter;
-  createuserRepositoryStub: CreateuserRepository;
+  createuserRepositoryStub: UserRepository;
 }
 const makeSut = (): SutType => {
   const encrypterStub = makeEncrypter();
