@@ -18,7 +18,7 @@ export class DbCreateUser implements createUser {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    this.encrypter.encrypt(user.password);
+    await this.encrypter.encrypt(user.password);
     return new Promise((resolve) => resolve(data));
   }
 }
