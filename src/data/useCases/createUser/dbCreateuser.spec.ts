@@ -33,4 +33,20 @@ describe("dbCreateUser", () => {
     sut.create(userData);
     expect(encryptSpy).toHaveBeenCalledWith("valid_password");
   });
+  test("Should call Encrypter with correct password", async () => {
+    const { encrypterStub, sut } = makeSut();
+    jest
+      .spyOn(encrypterStub, "encrypt")
+      .mockReturnValueOnce(
+        new Promise((resolve, reject) => reject(new Error()))
+      );
+    const userData = {
+      username: "validName",
+      email: "valid@mail.com",
+      password: "valid_password",
+      isAdmin: false,
+    };
+    const promise = sut.create(userData);
+    await expect(promise).rejects.toThrow();
+  });
 });
