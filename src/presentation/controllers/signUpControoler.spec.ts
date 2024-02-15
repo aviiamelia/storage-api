@@ -1,4 +1,4 @@
-import { ZodIssue } from "zod";
+import { ZodError, ZodIssue } from "zod";
 import { SignUpController } from "./signUp";
 import { UserTypeSchema } from "../protocols/user.schema";
 import { ValuesValidator } from "../protocols/valuesValidator";
@@ -23,55 +23,61 @@ const makeCreateUser = (): createUser => {
   }
   return new createUserStub();
 };
+
+const userBodyValidatorStub = () => {
+  class UserBodyValidatorStub implements ValuesValidator {
+    isValid(
+      values: UserTypeSchema
+    ): { success: true; data: UserTypeSchema } | { success: false; error: ZodError } {
+      if (values) {
+        return { success: true, data: values };
+      }
+      return { success: false, error: new ZodError([]) };
+    }
+  }
+  return new UserBodyValidatorStub();
+};
 interface SutTypes {
   sut: SignUpController;
   makeCreateUserStub: createUser;
+  userBodyValidator: ValuesValidator;
 }
-
 const makeSut = (): SutTypes => {
-  class UserBodyValidatorStub implements ValuesValidator {
-    isValid(values: UserTypeSchema) {
-      if (values) {
-        return true;
-      }
-      return false;
-    }
-  }
   const makeCreateUserStub = makeCreateUser();
-  const sut = new SignUpController(
-    new UserBodyValidatorStub(),
-    makeCreateUserStub
-  );
+  const userBodyValidator = userBodyValidatorStub();
+  const sut = new SignUpController(userBodyValidator, makeCreateUserStub);
   return {
     sut,
     makeCreateUserStub,
+    userBodyValidator,
   };
 };
 
 describe("signUpController", () => {
-  test("Should return 400 if no proper values are provided", () => {
-    const { sut } = makeSut();
+  jest.clearAllMocks();
+  test("Should return 400 if no proper values are provided", async () => {
+    const { sut, userBodyValidator } = makeSut();
     const httpRequest = {
       body: {
         username: "any name",
         password: "any_password",
-        email: "rafael@email.com",
+        email: "rafael@email123.com",
       },
     };
-    const errorMock = [
-      {
-        code: "invalid_type",
-        expected: "boolean",
-        received: "undefined",
-        path: ["isAdmin"],
-        message: "Required",
-      },
-    ];
-    const httpResponse = sut.handle(httpRequest);
-    console.log(httpResponse.body.issues);
-    expect(httpResponse.body).toEqual(
-      new MissingParamError(errorMock as ZodIssue[])
-    );
+    const errorMock = {
+      code: "invalid_type",
+      expected: "boolean",
+      received: "undefined",
+      path: ["isAdmin"],
+      message: "Required",
+    };
+
+    jest.spyOn(userBodyValidator, "isValid").mockReturnValueOnce({
+      success: false,
+      error: new ZodError([errorMock] as ZodIssue[]),
+    });
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse.body).toEqual(new MissingParamError([errorMock] as ZodIssue[]));
   });
   test("Should call values validator, with correct values", () => {
     const { sut } = makeSut();

@@ -1,9 +1,7 @@
-import { ZodError } from "zod";
 import { MissingParamError } from "../error/missingParamsError";
 import { HttpRequest, HttpResponse } from "../protocols/http";
 import { ValuesValidator } from "../protocols/valuesValidator";
-import { userSchema } from "../protocols/user.schema";
-import { badRequest } from "../helpers/badrequest";
+import { badRequest, ok } from "../helpers/badrequest";
 import { createUser } from "../../domain/useCases/createUser";
 
 export class SignUpController {
@@ -13,19 +11,13 @@ export class SignUpController {
     this.valuesValidator = ValuesValidator;
     this.createUser = createUser;
   }
-  handle(httpRequest: HttpRequest): HttpResponse {
-    try {
-      userSchema.parse(httpRequest.body);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return badRequest(new MissingParamError(error.issues));
-      }
+  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+    const isValid = this.valuesValidator.isValid(httpRequest.body);
+    if (!isValid.success) {
+      return badRequest(new MissingParamError(isValid.error.issues));
     }
     const { username, password, email, isAdmin } = httpRequest.body;
-    this.createUser.create({ username, password, email, isAdmin });
-    return {
-      body: httpRequest.body,
-      statusCode: 200,
-    };
+    await this.createUser.create({ username, password, email, isAdmin });
+    return ok(201, httpRequest.body);
   }
 }
