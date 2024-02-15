@@ -1,16 +1,29 @@
+import { Encrypter } from "../../protocols/encrypter";
 import { DbCreateUser } from "./dbCreateUser";
+
+interface SutType {
+  sut: DbCreateUser;
+  encrypterStub: Encrypter;
+}
+
+const makeEncrypter = (): Encrypter => {
+  class EncrypterStub {
+    async encrypt(value: string): Promise<string> {
+      return new Promise((resolve) => resolve(value));
+    }
+  }
+  return new EncrypterStub();
+};
+const makeSut = (): SutType => {
+  const encrypterStub = makeEncrypter();
+  const sut = new DbCreateUser(encrypterStub);
+  return { sut, encrypterStub };
+};
 
 describe("dbCreateUser", () => {
   test("Should call Encrypter with correct password", () => {
-    class EncrypterStub {
-      async encrypt(value: string): Promise<string> {
-        return new Promise((resolve) => resolve("hashedPassword"));
-      }
-    }
-
-    const encryptStub = new EncrypterStub();
-    const sut = new DbCreateUser(encryptStub);
-    const encryptSpy = jest.spyOn(encryptStub, "encrypt");
+    const { encrypterStub, sut } = makeSut();
+    const encryptSpy = jest.spyOn(encrypterStub, "encrypt");
     const userData = {
       username: "validName",
       email: "valid@mail.com",
