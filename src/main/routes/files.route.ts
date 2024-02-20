@@ -1,11 +1,10 @@
 import path from "path";
-import { streamToBuffer } from "../utils/streamBuffer";
+import { streamToBuffer } from "../../utils/streamBuffer";
 import fs from "fs";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { r2 } from "../infra/lib/cloudflare";
-import fastify, { FastifyRequest } from "fastify";
-
-const app = fastify();
+import { r2 } from "../../infra/lib/cloudflare";
+import { FastifyRequest } from "fastify";
+import { app } from "../config/app";
 
 app.post("/uploads", async (request: FastifyRequest) => {
   const data = await request.file();

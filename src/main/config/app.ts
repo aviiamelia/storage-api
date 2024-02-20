@@ -1,6 +1,6 @@
 import fastify from "fastify";
 import multipart from "@fastify/multipart";
-import userRoute from "../../routes/user.route";
+import userRoute from "../routes/user.route";
 import cors from "@fastify/cors";
 
 export const app = fastify();
