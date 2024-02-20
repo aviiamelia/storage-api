@@ -1,5 +1,5 @@
 import { ZodError, ZodIssue } from "zod";
-import { SignUpController } from "./signUp";
+import { UserController } from "./signUp";
 import { UserTypeSchema } from "../protocols/user.schema";
 import { ValuesValidator } from "../protocols/valuesValidator";
 import { MissingParamError } from "../error/missingParamsError";
@@ -38,14 +38,14 @@ const userBodyValidatorStub = () => {
   return new UserBodyValidatorStub();
 };
 interface SutTypes {
-  sut: SignUpController;
+  sut: UserController;
   makeHandleUserStub: handleUserInterface;
   userBodyValidator: ValuesValidator;
 }
 const makeSut = (): SutTypes => {
   const makeHandleUserStub = makeCreateUser();
   const userBodyValidator = userBodyValidatorStub();
-  const sut = new SignUpController(userBodyValidator, makeHandleUserStub);
+  const sut = new UserController(userBodyValidator, makeHandleUserStub);
   return {
     sut,
     makeHandleUserStub,

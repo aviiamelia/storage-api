@@ -2,12 +2,12 @@ import { MissingParamError } from "../error/missingParamsError";
 import { HttpRequest, HttpResponse } from "../protocols/http";
 import { ValuesValidator } from "../protocols/valuesValidator";
 import { badRequest, ok } from "../helpers/badrequest";
-import { createUser } from "../../domain/useCases/user";
+import { handleUserInterface } from "../../domain/useCases/user";
 
-export class SignUpController {
+export class UserController {
   private readonly valuesValidator: ValuesValidator;
-  private readonly createUser: createUser;
-  constructor(ValuesValidator: ValuesValidator, createUser: createUser) {
+  private readonly createUser: handleUserInterface;
+  constructor(ValuesValidator: ValuesValidator, createUser: handleUserInterface) {
     this.valuesValidator = ValuesValidator;
     this.createUser = createUser;
   }
@@ -17,7 +17,7 @@ export class SignUpController {
       return badRequest(new MissingParamError(isValid.error.issues));
     }
     const { username, password, email, isAdmin } = httpRequest.body;
-    await this.createUser.create({ username, password, email, isAdmin });
-    return ok(201, httpRequest.body);
+    const user = await this.createUser.create({ username, password, email, isAdmin });
+    return ok(201, user);
   }
 }

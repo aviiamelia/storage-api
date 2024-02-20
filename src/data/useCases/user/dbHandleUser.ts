@@ -16,6 +16,6 @@ export class DbHandleUser implements handleUserInterface {
     const user = this.creatuserRepository.create(
       Object.assign({}, userData, { password: hashedPassword })
     );
-    return new Promise((resolve) => resolve(user));
+    return user;
   }
 }
