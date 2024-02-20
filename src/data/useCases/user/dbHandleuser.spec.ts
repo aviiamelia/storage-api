@@ -1,5 +1,5 @@
 import { UserModel } from "../../../domain/models/userModel";
-import { CreateUserModel } from "../../../domain/useCases/createUser";
+import { CreateUserModel } from "../../../domain/useCases/user";
 import { UserRepositoryInterface } from "../../protocols/createuserRepository";
 import { Encrypter } from "../../protocols/encrypter";
 import { DbHandleUser } from "./dbHandleUser";

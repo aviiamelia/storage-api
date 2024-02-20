@@ -2,7 +2,7 @@ import { MissingParamError } from "../error/missingParamsError";
 import { HttpRequest, HttpResponse } from "../protocols/http";
 import { ValuesValidator } from "../protocols/valuesValidator";
 import { badRequest, ok } from "../helpers/badrequest";
-import { createUser } from "../../domain/useCases/createUser";
+import { createUser } from "../../domain/useCases/user";
 
 export class SignUpController {
   private readonly valuesValidator: ValuesValidator;

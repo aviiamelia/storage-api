@@ -1,6 +1,6 @@
 import { UserRepositoryInterface } from "../../../../data/protocols/createuserRepository";
 import { UserModel } from "../../../../domain/models/userModel";
-import { CreateUserModel } from "../../../../domain/useCases/createUser";
+import { CreateUserModel } from "../../../../domain/useCases/user";
 import prisma from "../../prismaClient/prismaClient";
 
 export class UserRepository implements UserRepositoryInterface {

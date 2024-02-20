@@ -1,4 +1,4 @@
-import { handleUserInterface, CreateUserModel } from "../../../domain/useCases/createUser";
+import { handleUserInterface, CreateUserModel } from "../../../domain/useCases/user";
 import { UserModel } from "../../../domain/models/userModel";
 import { Encrypter } from "../../protocols/encrypter";
 import { UserRepositoryInterface } from "../../protocols/createuserRepository";
