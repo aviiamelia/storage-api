@@ -17,7 +17,7 @@ export class UserController {
       return badRequest(new MissingParamError(isValid.error.issues));
     }
     const { username, password, email, isAdmin } = httpRequest.body;
-    await this.createUser.create({ username, password, email, isAdmin });
-    return ok(201, httpRequest.body);
+    const user = await this.createUser.create({ username, password, email, isAdmin });
+    return ok(201, user);
   }
 }

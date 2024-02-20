@@ -14,12 +14,17 @@ describe("user route", () => {
     await prismaMock.user.deleteMany();
   });
   test("create user route", async () => {
+    const userData = {
+      username: "validName",
+      email: "valid@mail.com",
+      password: "valid_password",
+      isAdmin: false,
+    };
     const request = await app.inject({
-      method: "GET",
+      method: "POST",
       url: "/user",
+      body: userData,
     });
-    const response = JSON.parse(request.payload);
-
-    expect(response).toEqual({ message: "deu certo" });
+    expect(request.statusCode).toBe(201);
   });
 });
