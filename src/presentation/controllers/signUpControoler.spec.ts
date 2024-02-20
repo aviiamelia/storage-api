@@ -4,10 +4,10 @@ import { UserTypeSchema } from "../protocols/user.schema";
 import { ValuesValidator } from "../protocols/valuesValidator";
 import { MissingParamError } from "../error/missingParamsError";
 import { UserModel } from "../../domain/models/userModel";
-import { createUser } from "../../domain/useCases/createUser";
+import { handleUserInterface } from "../../domain/useCases/createUser";
 
-const makeCreateUser = (): createUser => {
-  class createUserStub implements createUser {
+const makeCreateUser = (): handleUserInterface => {
+  class createUserStub implements handleUserInterface {
     async create(): Promise<UserModel> {
       const fakeUser = {
         id: "fakeid",
@@ -39,7 +39,7 @@ const userBodyValidatorStub = () => {
 };
 interface SutTypes {
   sut: SignUpController;
-  makeCreateUserStub: createUser;
+  makeCreateUserStub: handleUserInterface;
   userBodyValidator: ValuesValidator;
 }
 const makeSut = (): SutTypes => {

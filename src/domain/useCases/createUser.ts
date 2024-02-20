@@ -7,6 +7,6 @@ export interface CreateUserModel {
   isAdmin: boolean;
 }
 
-export interface createUser {
+export interface handleUserInterface {
   create(user: CreateUserModel): Promise<UserModel>;
 }

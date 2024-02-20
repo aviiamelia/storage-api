@@ -1,9 +1,9 @@
-import { createUser, CreateUserModel } from "../../../domain/useCases/createUser";
+import { handleUserInterface, CreateUserModel } from "../../../domain/useCases/createUser";
 import { UserModel } from "../../../domain/models/userModel";
 import { Encrypter } from "../../protocols/encrypter";
 import { UserRepositoryInterface } from "../../protocols/createuserRepository";
 
-export class DbHandleUser implements createUser {
+export class DbHandleUser implements handleUserInterface {
   private readonly encrypter;
   private readonly creatuserRepository;
   constructor(encrypter: Encrypter, creatuserRepository: UserRepositoryInterface) {
