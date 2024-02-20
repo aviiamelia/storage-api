@@ -11,8 +11,17 @@ const makeSut = (): SutType => {
 };
 
 describe("should create new user", () => {
-  beforeAll(async () => {});
-  afterAll(() => {});
+  beforeAll(async () => {
+    await prismaMock.$connect();
+  });
+  afterAll(async () => {
+    await prismaMock.$disconnect();
+  });
+  beforeEach(async () => {
+    await prismaMock.file.deleteMany();
+    await prismaMock.folder.deleteMany();
+    await prismaMock.user.deleteMany();
+  });
 
   test("should return a user on sucess", async () => {
     const user = {
