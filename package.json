@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "tsx watch --env-file .env src/presentation/http/server.ts",
     "test": "jest --watchAll",
-    "prisma-studio": "prisma studio --schema=./src/infra/prisma/schema.prisma"
+    "prisma-studio": "prisma studio --schema=./src/infra/prisma/schema.prisma",
+    "migratedb": "prisma migrate dev --schema=./src/infra/prisma/schema.prisma"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.498.0",
@@ -28,11 +29,16 @@
     "@types/fastify-multipart": "^0.7.0",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.11.6",
+    "@types/pg": "^8.11.0",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "babel-jest": "^29.7.0",
     "eslint": "^8.56.0",
     "jest": "^29.7.0",
+    "jest-mock-extended": "2.0.4",
+    "pg": "^8.11.3",
+    "pg-mem": "^2.8.1",
+    "pgsql-ast-parser": "^12.0.1",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   },

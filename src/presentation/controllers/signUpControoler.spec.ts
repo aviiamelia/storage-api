@@ -4,10 +4,10 @@ import { UserTypeSchema } from "../protocols/user.schema";
 import { ValuesValidator } from "../protocols/valuesValidator";
 import { MissingParamError } from "../error/missingParamsError";
 import { UserModel } from "../../domain/models/userModel";
-import { createUser } from "../../domain/useCases/createUser";
+import { handleUserInterface } from "../../domain/useCases/user";
 
-const makeCreateUser = (): createUser => {
-  class createUserStub implements createUser {
+const makeCreateUser = (): handleUserInterface => {
+  class handleUserStub implements handleUserInterface {
     async create(): Promise<UserModel> {
       const fakeUser = {
         id: "fakeid",
@@ -21,7 +21,7 @@ const makeCreateUser = (): createUser => {
       return new Promise((resolve) => resolve(fakeUser));
     }
   }
-  return new createUserStub();
+  return new handleUserStub();
 };
 
 const userBodyValidatorStub = () => {
@@ -39,16 +39,16 @@ const userBodyValidatorStub = () => {
 };
 interface SutTypes {
   sut: SignUpController;
-  makeCreateUserStub: createUser;
+  makeHandleUserStub: handleUserInterface;
   userBodyValidator: ValuesValidator;
 }
 const makeSut = (): SutTypes => {
-  const makeCreateUserStub = makeCreateUser();
+  const makeHandleUserStub = makeCreateUser();
   const userBodyValidator = userBodyValidatorStub();
-  const sut = new SignUpController(userBodyValidator, makeCreateUserStub);
+  const sut = new SignUpController(userBodyValidator, makeHandleUserStub);
   return {
     sut,
-    makeCreateUserStub,
+    makeHandleUserStub,
     userBodyValidator,
   };
 };
@@ -94,7 +94,7 @@ describe("signUpController", () => {
     expect(spy).toHaveBeenCalledWith(httpRequest);
   });
   test("Should call create user, with correct values", () => {
-    const { sut, makeCreateUserStub } = makeSut();
+    const { sut, makeHandleUserStub } = makeSut();
     const httpRequest = {
       body: {
         username: "any name",
@@ -103,7 +103,7 @@ describe("signUpController", () => {
         isAdmin: false,
       },
     };
-    const createSpy = jest.spyOn(makeCreateUserStub, "create");
+    const createSpy = jest.spyOn(makeHandleUserStub, "create");
     sut.handle(httpRequest);
     expect(createSpy).toHaveBeenCalledWith(httpRequest.body);
   });

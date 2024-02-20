@@ -1,8 +1,8 @@
 import { UserModel } from "../../../domain/models/userModel";
-import { CreateUserModel } from "../../../domain/useCases/createUser";
-import { CreateuserRepository } from "../../protocols/createuserRepository";
+import { CreateUserModel } from "../../../domain/useCases/user";
+import { UserRepositoryInterface } from "../../protocols/createuserRepository";
 import { Encrypter } from "../../protocols/encrypter";
-import { DbCreateUser } from "./dbCreateUser";
+import { DbHandleUser } from "./dbHandleUser";
 
 const makeEncrypter = (): Encrypter => {
   class EncrypterStub implements Encrypter {
@@ -12,8 +12,8 @@ const makeEncrypter = (): Encrypter => {
   }
   return new EncrypterStub();
 };
-const makeCreateuserRepository = (): CreateuserRepository => {
-  class CreateuserRepositoryStub implements CreateuserRepository {
+const makeCreateuserRepository = (): UserRepositoryInterface => {
+  class CreateuserRepositoryStub implements UserRepositoryInterface {
     async create(user: CreateUserModel): Promise<UserModel> {
       const data = {
         ...user,
@@ -28,14 +28,14 @@ const makeCreateuserRepository = (): CreateuserRepository => {
 };
 
 interface SutType {
-  sut: DbCreateUser;
+  sut: DbHandleUser;
   encrypterStub: Encrypter;
-  createuserRepositoryStub: CreateuserRepository;
+  createuserRepositoryStub: UserRepositoryInterface;
 }
 const makeSut = (): SutType => {
   const encrypterStub = makeEncrypter();
   const createuserRepositoryStub = makeCreateuserRepository();
-  const sut = new DbCreateUser(encrypterStub, createuserRepositoryStub);
+  const sut = new DbHandleUser(encrypterStub, createuserRepositoryStub);
   return { sut, encrypterStub, createuserRepositoryStub };
 };
 
