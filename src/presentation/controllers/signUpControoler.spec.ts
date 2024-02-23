@@ -77,7 +77,12 @@ describe("signUpController", () => {
       error: new ZodError([errorMock] as ZodIssue[]),
     });
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse.body).toEqual(new MissingParamError([errorMock] as ZodIssue[]));
+    const error = new MissingParamError([errorMock] as ZodIssue[]);
+
+    expect(httpResponse.body).toEqual({
+      errorName: error.name,
+      message: JSON.parse(error.message),
+    });
   });
   test("Should call values validator, with correct values", () => {
     const { sut } = makeSut();
