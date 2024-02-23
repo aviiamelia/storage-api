@@ -1,6 +1,6 @@
 import { prismaMock } from "../../mock/singleton";
 import { UserRepository } from "./userRepository";
-
+import { expect, test, describe, beforeAll, beforeEach, afterAll } from "vitest";
 interface SutType {
   userRepository: UserRepository;
 }
@@ -11,9 +11,7 @@ const makeSut = (): SutType => {
 };
 
 describe("should create new user", () => {
-  beforeAll(async () => {
-    await prismaMock.$connect();
-  });
+  beforeAll(async () => {});
   afterAll(async () => {
     await prismaMock.$disconnect();
   });
