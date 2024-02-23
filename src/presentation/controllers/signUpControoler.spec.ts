@@ -5,6 +5,7 @@ import { ValuesValidator } from "../protocols/valuesValidator";
 import { MissingParamError } from "../error/missingParamsError";
 import { UserModel } from "../../domain/models/userModel";
 import { handleUserInterface } from "../../domain/useCases/user";
+import { expect, test, describe, vi } from "vitest";
 
 const makeCreateUser = (): handleUserInterface => {
   class handleUserStub implements handleUserInterface {
@@ -54,7 +55,7 @@ const makeSut = (): SutTypes => {
 };
 
 describe("signUpController", () => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   test("Should return 400 if no proper values are provided", async () => {
     const { sut, userBodyValidator } = makeSut();
     const httpRequest = {
@@ -72,7 +73,7 @@ describe("signUpController", () => {
       message: "Required",
     };
 
-    jest.spyOn(userBodyValidator, "isValid").mockReturnValueOnce({
+    vi.spyOn(userBodyValidator, "isValid").mockReturnValueOnce({
       success: false,
       error: new ZodError([errorMock] as ZodIssue[]),
     });
@@ -94,7 +95,7 @@ describe("signUpController", () => {
         isAdmin: false,
       },
     };
-    const spy = jest.spyOn(sut, "handle");
+    const spy = vi.spyOn(sut, "handle");
     sut.handle(httpRequest);
     expect(spy).toHaveBeenCalledWith(httpRequest);
   });
@@ -108,7 +109,7 @@ describe("signUpController", () => {
         isAdmin: false,
       },
     };
-    const createSpy = jest.spyOn(makeHandleUserStub, "create");
+    const createSpy = vi.spyOn(makeHandleUserStub, "create");
     sut.handle(httpRequest);
     expect(createSpy).toHaveBeenCalledWith(httpRequest.body);
   });

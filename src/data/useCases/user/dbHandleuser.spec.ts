@@ -3,6 +3,7 @@ import { CreateUserModel } from "../../../domain/useCases/user";
 import { UserRepositoryInterface } from "../../protocols/createuserRepository";
 import { Encrypter } from "../../protocols/encrypter";
 import { DbHandleUser } from "./dbHandleUser";
+import { expect, test, describe, vi } from "vitest";
 
 const makeEncrypter = (): Encrypter => {
   class EncrypterStub implements Encrypter {
@@ -42,7 +43,7 @@ const makeSut = (): SutType => {
 describe("dbCreateUser", () => {
   test("Should call Encrypter with correct password", () => {
     const { encrypterStub, sut } = makeSut();
-    const encryptSpy = jest.spyOn(encrypterStub, "encrypt");
+    const encryptSpy = vi.spyOn(encrypterStub, "encrypt");
     const userData = {
       username: "validName",
       email: "valid@mail.com",
@@ -54,9 +55,9 @@ describe("dbCreateUser", () => {
   });
   test("Should throw if encrypter throws", async () => {
     const { encrypterStub, sut } = makeSut();
-    jest
-      .spyOn(encrypterStub, "encrypt")
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    vi.spyOn(encrypterStub, "encrypt").mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error()))
+    );
     const userData = {
       username: "validName",
       email: "valid@mail.com",
@@ -68,7 +69,7 @@ describe("dbCreateUser", () => {
   });
   test("Should call createuser repository with correct values", async () => {
     const { createuserRepositoryStub, sut } = makeSut();
-    const createSpy = jest.spyOn(createuserRepositoryStub, "create");
+    const createSpy = vi.spyOn(createuserRepositoryStub, "create");
     const userData = {
       username: "validName",
       email: "valid@mail.com",
@@ -80,9 +81,9 @@ describe("dbCreateUser", () => {
   });
   test("Should throw if createuserRepository throws", async () => {
     const { createuserRepositoryStub, sut } = makeSut();
-    jest
-      .spyOn(createuserRepositoryStub, "create")
-      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    vi.spyOn(createuserRepositoryStub, "create").mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error()))
+    );
     const userData = {
       username: "validName",
       email: "valid@mail.com",

@@ -1,6 +1,6 @@
 import { prismaMock } from "../../infra/db/mock/singleton";
 import { app } from "../config/app";
-
+import { expect, test, describe, beforeAll, afterAll, beforeEach } from "vitest";
 describe("user route", () => {
   beforeAll(async () => {
     await prismaMock.$connect();
